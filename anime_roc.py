@@ -17,7 +17,7 @@ This app **Recommends Animes** based on other Animes you liked
 
 # loading files 
 
-@st.cache
+#@st.cache
 def load_Data():
     anime = pd.read_csv('anime_clean.csv', error_bad_lines=False)
     anime_in = pd.read_csv('anime_in.csv', error_bad_lines=False)
