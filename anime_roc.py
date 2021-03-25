@@ -30,9 +30,8 @@ def load_Data():
     
 anime,anime_in,sim_matrix,knn = load_Data()
 indices = pd.Series(anime.index, index=anime['title']).drop_duplicates()
-st.dataframe(anime)
 
-option = st.selectbox("Select an anime you like", np.insert(anime['title'].values,0,'') )
+option = st.selectbox("Select an anime you like", np.insert(anime['title'].values,0,'None') )
 
 def content_based_recommender(title, sim_scores=sim_matrix):
     idx = indices[title]
@@ -47,7 +46,7 @@ def all_based_recommender(title):
     distances , anime_index = knn.kneighbors(anime_in.iloc[idx].values.reshape(1, -1) ,n_neighbors=10)
     return anime[['title','score','img_url'	,'link']].iloc[anime_index[0]]
 
-if option:
+if option!='None':
     # out = content_based_recommender(option)
     # out2 =  all_based_recommender(option)
     out = pd.concat([content_based_recommender(option),all_based_recommender(option)]).drop_duplicates()
