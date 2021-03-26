@@ -21,35 +21,33 @@ This app **Recommends Animes** based on other Animes you liked
 def load_Data():
     anime = pd.read_csv('anime_clean.csv', error_bad_lines=False)
     anime_in = pd.read_csv('anime_in.csv', error_bad_lines=False)
+    knn_genre_score =load('knn_genre_score.joblib')
+    knn_synopsis =load('knn_synopsis.joblib')
     tfidf_vector = TfidfVectorizer(stop_words='english')
     anime['synopsis'] = anime['synopsis'].fillna('')
     tfidf_matrix = tfidf_vector.fit_transform(anime['synopsis'].values)
-    sim_matrix = linear_kernel(tfidf_matrix, tfidf_matrix)
-    knn =load('anime_roc.joblib')
-    return anime,anime_in,sim_matrix,knn
+    indices = pd.Series(anime.index, index=anime['title']).drop_duplicates()
+    return anime,anime_in,knn_genre_score,knn_synopsis,indices,tfidf_matrix
     
-anime,anime_in,sim_matrix,knn = load_Data()
-indices = pd.Series(anime.index, index=anime['title']).drop_duplicates()
+anime,anime_in,knn_genre_score,knn_synopsis,indices,tfidf_matrix = load_Data()
+
 
 option = st.selectbox("Select an anime you like", np.insert(anime['title'].values,0,'None') )
 
-def content_based_recommender(title, sim_scores=sim_matrix):
+def synopsis_based_recommender(title):
     idx = indices[title]
-    sim_scores = list(enumerate(sim_matrix[idx]))
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-    sim_scores = sim_scores[1:11]
-    anime_indices = [i[0] for i in sim_scores]
-    return anime[['title','score'	,'img_url'	,'link']].iloc[anime_indices]
+    distances , anime_index = knn_synopsis.kneighbors(tfidf_matrix[idx] ,n_neighbors=10)
+    return anime[['title','score','img_url'	,'link']].iloc[anime_index[0]]
 
-def all_based_recommender(title):
+def genre_score_based_recommender(title):
     idx = indices[title]
-    distances , anime_index = knn.kneighbors(anime_in.iloc[idx].values.reshape(1, -1) ,n_neighbors=10)
+    distances , anime_index = knn_genre_score.kneighbors(anime_in.iloc[idx].values.reshape(1, -1) ,n_neighbors=10)
     return anime[['title','score','img_url'	,'link']].iloc[anime_index[0]]
 
 if option!='None':
     # out = content_based_recommender(option)
     # out2 =  all_based_recommender(option)
-    out = pd.concat([content_based_recommender(option),all_based_recommender(option)]).drop_duplicates()
+    out = pd.concat([genre_score_based_recommender(option),synopsis_based_recommender(option)]).drop_duplicates()
     my_images = ''
     for  index, row in out.iterrows():
         my_images += """[![this is an image link](""" +row['img_url']+""")]("""+row['link']+""") """
