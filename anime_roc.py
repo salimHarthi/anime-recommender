@@ -3,7 +3,6 @@ import pandas as pd
 from PIL import Image
 from joblib import load
 from sklearn.neighbors import NearestNeighbors
-from sklearn.metrics.pairwise import linear_kernel
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 # Load from model
