@@ -35,12 +35,12 @@ option = st.selectbox("Select an anime you like", np.insert(anime['title'].value
 
 def synopsis_based_recommender(title):
     idx = indices[title]
-    distances , anime_index = knn_synopsis.kneighbors(tfidf_matrix[idx] ,n_neighbors=10)
+    distances , anime_index = knn_synopsis.kneighbors(tfidf_matrix[idx] ,n_neighbors=25)
     return anime[['title','score','img_url'	,'link']].iloc[anime_index[0]]
 
 def genre_score_based_recommender(title):
     idx = indices[title]
-    distances , anime_index = knn_genre_score.kneighbors(anime_in.iloc[idx].values.reshape(1, -1) ,n_neighbors=10)
+    distances , anime_index = knn_genre_score.kneighbors(anime_in.iloc[idx].values.reshape(1, -1) ,n_neighbors=25)
     return anime[['title','score','img_url'	,'link']].iloc[anime_index[0]]
 
 if option!='None':
