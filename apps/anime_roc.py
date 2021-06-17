@@ -42,7 +42,10 @@ def app():
         out = pd.concat([genre_score_based_recommender(option),synopsis_based_recommender(option)]).drop_duplicates()
         my_images = ''
         for  index, row in out.iterrows():
-            my_images += """[![this is an image link](""" +row['img_url']+""")]("""+row['link']+""") """
+            try:
+                my_images += """[![this is an image link](""" +row['img_url']+""")]("""+row['link']+""") """
+            except:
+                my_images += """[! anime list link]("""+row['link']+""") """
 
 
         st.markdown(my_images)

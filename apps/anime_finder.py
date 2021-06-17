@@ -31,7 +31,10 @@ def app():
         out = user_desc_finder(user_input)
         my_images = ''
         for  index, row in out.iterrows():
-            my_images += """[![this is an image link](""" +row['img_url']+""")]("""+row['link']+""") """
+            try:
+                my_images += """[![this is an image link](""" +row['img_url']+""")]("""+row['link']+""") """
+            except:
+                my_images += """[! anime list link]("""+row['link']+""") """
 
 
         st.markdown(my_images)
