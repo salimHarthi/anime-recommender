@@ -14,7 +14,7 @@ def app():
     # loading files 
 
     def load_Data():
-        anime = pd.read_csv('data/anime_clean.csv', error_bad_lines=False)
+        anime = pd.read_csv('data/anime_clean.csv')
         knn_synopsis =load('data/knn_synopsis.joblib')
         tfidf_vector =load('data/user_desc_finder.joblib')
         return anime,knn_synopsis,tfidf_vector
